@@ -1,0 +1,99 @@
+# ============================================
+# UNITY 6.x .gitignore
+# Basado en las recomendaciones oficiales
+# ============================================
+
+# --- Carpetas generadas automáticamente por Unity ---
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+UserSettings/
+MemoryCaptures/
+Recordings/
+CrashReports/
+
+# --- Archivos temporales de compilación ---
+*.pidb
+*.suo
+*.user
+*.userprefs
+*.unityproj
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.tmp
+*.bak
+*.old
+*.orig
+*.stackdump
+
+# --- Archivos de sistema operativo ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Icon?
+desktop.ini
+
+# --- IDEs y editores ---
+.vscode/
+.idea/
+*.DotSettings
+*.csproj
+*.sln
+*.vsconfig
+
+# --- Archivos de compilación ---
+*.apk
+*.aab
+*.unitypackage
+*.exe
+*.app
+*.xcodeproj/
+*.xcworkspace/
+*.xcuserstate
+*.ipa
+*.msi
+*.zip
+
+# --- Unity Cache ---
+sysinfo.txt
+*.log
+
+# --- Addressables y nuevo sistema de Assets ---
+/ServerData/
+*/AddressablesBuildData/*
+*/AssetBundles/*
+
+# --- Unity Collaborate & Plastic SCM ---
+.collab/
+PlasticSCM/
+
+# --- Shader cache ---
+/ShaderCache/
+*.shadercache
+*.cache
+
+# --- Build artefacts del nuevo Render Pipeline ---
+*/ShaderCache/
+*/Library/ShaderCache/
+*/Library/GPUCache/
+
+# --- Archivos de paquetes ---
+/Packages/com.unity.package-manager-ui/
+manifest-temp.json
+
+# --- Archivos personalizados (opcional) ---
+# /Assets/ExternalPlugins/
+# /Assets/StreamingAssets/
+
+# ============================================
+# Fin del archivo .gitignore para Unity 6.x
+# ============================================
