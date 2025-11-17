@@ -17,23 +17,27 @@ public class BasketController : MonoBehaviour
     // ✨ NUEVO: Asigna el Audio Source de la canasta aquí en el Inspector.
     public AudioSource basketAudio;
 
+    private int applesCollected = 0; // NUEVO: Contador para el nivel 1
+
     void Update()
     {
-        // Obtiene la entrada horizontal (teclas A/D o flechas izquierda/derecha)
-        float horizontalInput = Input.GetAxis("Horizontal");
+        if (GameConfig.currentLevel == GameConfig.Level.Level1) {
+            // Obtiene la entrada horizontal (teclas A/D o flechas izquierda/derecha)
+            float horizontalInput = Input.GetAxis("Horizontal");
 
-       if (horizontalInput != 0)
-        {
-            // Calcula el movimiento
-            Vector3 movement = new Vector3(horizontalInput * moveSpeed * Time.deltaTime, 0, 0);
+            if (horizontalInput != 0)
+            {
+                // Calcula el movimiento
+                Vector3 movement = new Vector3(horizontalInput * moveSpeed * Time.deltaTime, 0, 0);
 
-            // Aplica el movimiento a la posición
-            transform.position += movement;
+                // Aplica el movimiento a la posición
+                transform.position += movement;
 
-            // Limita la posición X
-            Vector3 currentPosition = transform.position;
-            currentPosition.x = Mathf.Clamp(currentPosition.x, minX, maxX);
-            transform.position = currentPosition;
+                // Limita la posición X
+                Vector3 currentPosition = transform.position;
+                currentPosition.x = Mathf.Clamp(currentPosition.x, minX, maxX);
+                transform.position = currentPosition;
+            }
         }
     }
 
@@ -41,26 +45,31 @@ public class BasketController : MonoBehaviour
     // entra en el Collider2D de la cesta, si el de la cesta es un 'Trigger'
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Apple")) // Manzana normal
-        {
-            Debug.Log("¡Manzana buena atrapada! Sumar puntos.");
-
-            // ✨ LLAMAR A LA FUNCIÓN DE INDICADOR DE PUNTUACIÓN
-            ShowScoreIndicator(transform.position);
-
-            // ✨ REPRODUCIR SONIDO
-            if (basketAudio != null && basketAudio.clip != null)
+        if (GameConfig.currentLevel == GameConfig.Level.Level1) {
+            if (other.CompareTag("Apple")) // Manzana normal
             {
-                basketAudio.Play();
-            }
+                Debug.Log("¡Manzana buena atrapada! Sumar puntos.");
 
-            Destroy(other.gameObject);
-            // Aquí agregarás la lógica para sumar puntos (e.g., incrementar contador/puntuación)
-        }
-        else if (other.CompareTag("WormApple")) // Manzana con gusano
-        {
-            Debug.Log("¡Manzana con gusano atrapada! No sumar puntos o restar.");
-            Destroy(other.gameObject);
+                applesCollected++; // NUEVO: Incrementar contador
+                GameConfig.appleCountFromLevel1 = applesCollected; // Guardar para nivel 2
+
+                // ✨ LLAMAR A LA FUNCIÓN DE INDICADOR DE PUNTUACIÓN
+                ShowScoreIndicator(transform.position);
+
+                // ✨ REPRODUCIR SONIDO
+                if (basketAudio != null && basketAudio.clip != null)
+                {
+                    basketAudio.Play();
+                }
+
+                Destroy(other.gameObject);
+                // Aquí agregarás la lógica para sumar puntos (e.g., incrementar contador/puntuación)
+            }
+            else if (other.CompareTag("WormApple")) // Manzana con gusano
+            {
+                Debug.Log("¡Manzana con gusano atrapada! No sumar puntos o restar.");
+                Destroy(other.gameObject);
+            }
         }
     }
     

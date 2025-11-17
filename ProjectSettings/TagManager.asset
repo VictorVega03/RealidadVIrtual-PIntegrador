@@ -8,6 +8,8 @@ TagManager:
   - TreeArea
   - Character
   - playButton
+  - TrashCan
+  - WormApple
   layers:
   - Default
   - TransparentFX
