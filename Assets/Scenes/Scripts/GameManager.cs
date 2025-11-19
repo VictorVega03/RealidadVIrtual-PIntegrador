@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     public Button playButton;
     public AppleSpawner appleSpawner; // Para nivel 1
     public AppleSpawnerLevel2 appleSpawnerLevel2; // NUEVO: Para nivel 2
+    public AppleSpawnerLevel4 appleSpawnerLevel4; // NUEVO: Para nivel 4
 
     [Header("Referencias UI y Spawner")]
     public GameObject characterObject;
@@ -120,6 +121,10 @@ public class GameManager : MonoBehaviour
             {
                 dialogueText.text = "Muy bien! Ahora ayúdame a separar las manzanas malas.\nArrastra las manzanas con gusano al bote de basura. Cuenta cuántas manzanas malas eliminas:D!";
             }
+            else if (GameConfig.currentLevel == GameConfig.Level.Level4)
+            {
+                dialogueText.text = "¡Excelente! Ahora ayúdame a repartir estas pizzas entre mis amigos.\nCada uno debe recibir la misma cantidad. ¡Arrastra las pizzas hacia ellos!";
+            }
         }
 
         currentGameState = GameState.DialogueReady;
@@ -163,6 +168,13 @@ public class GameManager : MonoBehaviour
             if (appleSpawnerLevel2 != null)
             {
                 appleSpawnerLevel2.SpawnAllApples();
+            }
+        }
+        else if (GameConfig.currentLevel == GameConfig.Level.Level4)
+        {
+            if (appleSpawnerLevel4 != null)
+            {
+                appleSpawnerLevel4.SpawnAllApples();
             }
         }
     }
