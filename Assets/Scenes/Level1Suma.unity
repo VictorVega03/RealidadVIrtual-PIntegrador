@@ -673,6 +673,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playButton: {fileID: 771385720}
   appleSpawner: {fileID: 684648117}
+  appleSpawnerLevel2: {fileID: 0}
   characterObject: {fileID: 1758626509}
   dialogueScroll: {fileID: 1497947493}
   dialogueText: {fileID: 1986924248}
@@ -683,6 +684,7 @@ MonoBehaviour:
   characterSpinSpeed: 360
   characterAudio: {fileID: 1758626514}
   backgroundMusic: {fileID: 175805157}
+  levelToPlay: 0
 --- !u!4 &786502434
 Transform:
   m_ObjectHideFlags: 0
@@ -1415,8 +1417,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1954417823}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2357,11 +2358,11 @@ Transform:
   m_GameObject: {fileID: 1954417822}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -434.37, y: -199.97, z: 0}
+  m_LocalPosition: {x: -105.09003, y: -50.049988, z: 0}
   m_LocalScale: {x: 1.76, y: 1.48, z: 1.1812514}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1366471913}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1954417824
 SpriteRenderer:
@@ -2571,6 +2572,7 @@ SceneRoots:
   - {fileID: 1468337913}
   - {fileID: 1026824125}
   - {fileID: 175805156}
+  - {fileID: 1954417823}
   - {fileID: 786502434}
   - {fileID: 684648118}
   - {fileID: 1829061218}
