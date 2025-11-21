@@ -71,24 +71,35 @@ public class CellController : MonoBehaviour, IDropHandler, IPointerEnterHandler,
             return;
         }
         
+        // Instanciar árbol visual en esta celda UI
         currentTree = Instantiate(treePrefab, transform);
         
+        // Configurar como hijo UI - MANTENER ESCALA DEL PREFAB
         RectTransform treeRect = currentTree.GetComponent<RectTransform>();
         if (treeRect != null)
         {
             treeRect.anchoredPosition = Vector2.zero;
-            treeRect.localScale = Vector3.one;
-            Debug.Log("✓ Árbol posicionado en celda");
+            // NO cambiar localScale - usar la del prefab (0.12)
+            Debug.Log($"✓ Árbol posicionado en celda con escala: {currentTree.transform.localScale}");
         }
         else
         {
             Debug.LogError("ERROR: TreeUI no tiene RectTransform!");
         }
         
-        gridManager.OnTreePlaced(row, col, true);
+        // Notificar al GridManager
+        if (gridManager != null)
+        {
+            gridManager.OnTreePlaced(row, col, true);
+        }
+        else
+        {
+            Debug.LogError("ERROR: gridManager es NULL!");
+        }
         
         Debug.Log($"✓ Árbol plantado exitosamente en Cell_{row}_{col}");
         
+        // Animación
         PlayPlantAnimation();
     }
 
@@ -105,18 +116,22 @@ public class CellController : MonoBehaviour, IDropHandler, IPointerEnterHandler,
         float duration = 0.3f;
         float elapsed = 0f;
         
+        // Guardar escala objetivo (la que tiene el prefab)
+        Vector3 targetScale = tree.transform.localScale;
+        
+        // Empezar desde 0
         tree.transform.localScale = Vector3.zero;
         
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
-            tree.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, t);
+            tree.transform.localScale = Vector3.Lerp(Vector3.zero, targetScale, t);
             yield return null;
         }
         
-        tree.transform.localScale = Vector3.one;
-        Debug.Log("✓ Animación completada");
+        tree.transform.localScale = targetScale;
+        Debug.Log($"✓ Animación completada con escala: {targetScale}");
     }
 
     public bool HasTree()
