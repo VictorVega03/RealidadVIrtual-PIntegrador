@@ -63,42 +63,57 @@ public class TreeDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         }
     }
 
-    public void OnEndDrag(PointerEventData eventData)
+public void OnEndDrag(PointerEventData eventData)
+{
+    Debug.Log($"\n========== OnEndDrag en {gameObject.name} ==========");
+    
+    GridManager gridManager = FindObjectOfType<GridManager>();
+    if (gridManager != null)
     {
-        Debug.Log($"\n========== OnEndDrag en {gameObject.name} ==========");
-        Debug.Log($"Posicion final: {rectTransform.anchoredPosition}");
+        // Obtener posición en espacio mundial
+        Vector3 worldPosition = transform.position;
+        Vector2 dropPosition = new Vector2(worldPosition.x, worldPosition.y);
         
-        // Detección manual: Buscar celda más cercana
-        GridManager gridManager = FindObjectOfType<GridManager>();
-        if (gridManager != null)
+        Debug.Log($"Posicion mundial: {dropPosition}");
+        
+        CellController closestCell = gridManager.FindClosestCell(dropPosition);
+        
+        if (closestCell != null)
         {
-            Vector2 dropPosition = rectTransform.anchoredPosition;
-            CellController closestCell = gridManager.FindClosestCell(dropPosition);
+            RectTransform cellRect = closestCell.GetComponent<RectTransform>();
             
-            if (closestCell != null && !closestCell.HasTree())
+            // Calcular distancia ya convertida
+            Vector2 localDropPos = gridManager.gridParent.InverseTransformPoint(dropPosition);
+            float distance = Vector2.Distance(localDropPos, cellRect.anchoredPosition);
+            
+            Debug.Log($"Distancia real: {distance}");
+            
+            float maxDistance = 100f;
+            
+            if (distance <= maxDistance && !closestCell.HasTree())
             {
-                Debug.Log($"✓ Celda valida encontrada - Plantando");
+                Debug.Log($"✓ Celda valida (distancia: {distance})");
                 closestCell.TryPlaceTree();
                 wasPlaced = true;
-                
-                // Ocultar este árbol arrastrable
                 gameObject.SetActive(false);
-                Debug.Log("✓ Arbol arrastrable ocultado");
+            }
+            else if (distance > maxDistance)
+            {
+                Debug.Log($"⚠ Demasiado lejos (distancia: {distance}, max: {maxDistance})");
             }
             else
             {
-                Debug.Log("⚠ Celda no valida o ya ocupada");
+                Debug.Log("⚠ Celda ya ocupada");
             }
         }
-        
-        // Solo regresar si NO fue plantado
-        if (!wasPlaced)
-        {
-            canvasGroup.alpha = 1f;
-            canvasGroup.blocksRaycasts = true;
-            rectTransform.anchoredPosition = originalPosition;
-            transform.SetSiblingIndex(originalSiblingIndex);
-            Debug.Log($"✓ Regresado a posicion original: {originalPosition}");
-        }
     }
+    
+    if (!wasPlaced)
+    {
+        canvasGroup.alpha = 1f;
+        canvasGroup.blocksRaycasts = true;
+        rectTransform.anchoredPosition = originalPosition;
+        transform.SetSiblingIndex(originalSiblingIndex);
+    }
+}
 }

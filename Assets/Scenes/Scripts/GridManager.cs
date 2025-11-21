@@ -112,38 +112,49 @@ public class GridManager : MonoBehaviour
         return totalScore;
     }
 
-    public CellController FindClosestCell(Vector2 dropPosition)
+  public CellController FindClosestCell(Vector2 dropPosition)
+{
+    CellController closestCell = null;
+    float closestDistance = float.MaxValue;
+    
+    // Convertir la posición del árbol al espacio local del GridParent
+    Vector2 localDropPosition = gridParent.InverseTransformPoint(dropPosition);
+    
+    Debug.Log($"\n→ FindClosestCell");
+    Debug.Log($"  Posicion original: {dropPosition}");
+    Debug.Log($"  Posicion local (GridParent): {localDropPosition}");
+    
+    for (int row = 0; row < rows; row++)
     {
-        CellController closestCell = null;
-        float closestDistance = float.MaxValue;
-        
-        for (int row = 0; row < rows; row++)
+        for (int col = 0; col < cols; col++)
         {
-            for (int col = 0; col < cols; col++)
+            if (cells[row, col] != null)
             {
-                if (cells[row, col] != null)
+                RectTransform cellRect = cells[row, col].GetComponent<RectTransform>();
+                if (cellRect != null)
                 {
-                    RectTransform cellRect = cells[row, col].GetComponent<RectTransform>();
-                    if (cellRect != null)
+                    Vector2 cellPosition = cellRect.anchoredPosition;
+                    float distance = Vector2.Distance(localDropPosition, cellPosition);
+                    
+                    if (distance < closestDistance)
                     {
-                        Vector2 cellPosition = cellRect.anchoredPosition;
-                        float distance = Vector2.Distance(dropPosition, cellPosition);
-                        
-                        if (distance < closestDistance)
-                        {
-                            closestDistance = distance;
-                            closestCell = cells[row, col];
-                        }
+                        closestDistance = distance;
+                        closestCell = cells[row, col];
                     }
                 }
             }
         }
-        
-        if (closestCell != null)
-        {
-            Debug.Log($"✓ Celda mas cercana: {closestCell.name}, distancia: {closestDistance}");
-        }
-        
-        return closestCell;
     }
+    
+    if (closestCell != null)
+    {
+        Debug.Log($"✓ Celda mas cercana: {closestCell.name}, distancia: {closestDistance}");
+    }
+    else
+    {
+        Debug.Log("⚠ No se encontro ninguna celda");
+    }
+    
+    return closestCell;
+}
 }
