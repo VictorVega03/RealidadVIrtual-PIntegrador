@@ -1,63 +1,61 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class TreeDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    private Canvas canvas;
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private Vector2 originalPosition;
+    private Transform originalParent;
+    private Canvas canvas;
+    private int originalSiblingIndex;
 
     void Awake()
     {
-        Debug.Log($"TreeDragDrop Awake en {gameObject.name}");
-        
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
         canvas = GetComponentInParent<Canvas>();
         
-        if (rectTransform == null)
-            Debug.LogError($"ERROR: {gameObject.name} no tiene RectTransform!");
-        
         if (canvasGroup == null)
-            Debug.LogError($"ERROR: {gameObject.name} no tiene CanvasGroup!");
+        {
+            canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        }
         
-        if (canvas == null)
-            Debug.LogError($"ERROR: {gameObject.name} no encuentra Canvas padre!");
-        
-        originalPosition = rectTransform.anchoredPosition;
-        
-        Debug.Log($"✓ {gameObject.name} inicializado correctamente");
+        Debug.Log($"TreeDragDrop Awake en {gameObject.name}");
     }
 
     void Start()
     {
-        // Verificar tag
-        if (!gameObject.CompareTag("Tree"))
+        if (!CompareTag("Tree"))
         {
-            Debug.LogError($"ERROR: {gameObject.name} NO tiene tag 'Tree'!");
+            Debug.LogWarning($"{gameObject.name} no tiene tag 'Tree'!");
         }
         else
         {
-            Debug.Log($"✓ {gameObject.name} tiene tag 'Tree' correcto");
+            Debug.Log($"✓ {gameObject.name} inicializado correctamente");
         }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        Debug.Log($"========== OnBeginDrag en {gameObject.name} ==========");
+        Debug.Log($"\n========== OnBeginDrag en {gameObject.name} ==========");
         
-        if (canvasGroup != null)
-        {
-            canvasGroup.alpha = 0.6f;
-            canvasGroup.blocksRaycasts = false;
-            Debug.Log("✓ Alpha reducido, raycasts desactivados");
-        }
+        originalPosition = rectTransform.anchoredPosition;
+        originalParent = transform.parent;
+        originalSiblingIndex = transform.GetSiblingIndex();
+        
+        canvasGroup.alpha = 0.6f;
+        canvasGroup.blocksRaycasts = false;
+        
+        transform.SetAsLastSibling();
+        
+        Debug.Log("✓ Alpha reducido, raycasts desactivados");
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (rectTransform != null && canvas != null)
+        if (canvas != null)
         {
             rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
         }
@@ -65,23 +63,35 @@ public class TreeDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        Debug.Log($"========== OnEndDrag en {gameObject.name} ==========");
+        Debug.Log($"\n========== OnEndDrag en {gameObject.name} ==========");
         Debug.Log($"Posición final: {rectTransform.anchoredPosition}");
         
-        if (canvasGroup != null)
+        // DETECCIÓN MANUAL: Buscar celda más cercana
+        GridManager gridManager = FindObjectOfType<GridManager>();
+        if (gridManager != null)
         {
-            canvasGroup.alpha = 1f;
-            canvasGroup.blocksRaycasts = true;
+            Vector2 dropPosition = rectTransform.anchoredPosition;
+            CellController closestCell = gridManager.FindClosestCell(dropPosition);
+            
+            if (closestCell != null)
+            {
+                Debug.Log($"✓ Celda más cercana encontrada");
+                closestCell.TryPlaceTree();
+            }
+            else
+            {
+                Debug.Log("⚠ No se encontró celda cercana");
+            }
         }
         
-        // Regresa a posición original
+        // Restaurar transparencia y raycasts
+        canvasGroup.alpha = 1f;
+        canvasGroup.blocksRaycasts = true;
+        
+        // Volver a posición y orden original
         rectTransform.anchoredPosition = originalPosition;
+        transform.SetSiblingIndex(originalSiblingIndex);
+        
         Debug.Log($"✓ Regresado a posición original: {originalPosition}");
-    }
-
-    // Método para testear desde Inspector
-    void OnMouseDown()
-    {
-        Debug.Log($"CLICK detectado en {gameObject.name}!");
     }
 }

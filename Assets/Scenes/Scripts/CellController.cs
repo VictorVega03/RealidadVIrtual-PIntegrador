@@ -154,4 +154,18 @@ public class CellController : MonoBehaviour, IDropHandler, IPointerEnterHandler,
             highlight.color = normalColor;
         }
     }
+
+    public void TryPlaceTree()
+    {
+    Debug.Log($"\n========== TryPlaceTree en Cell_{row}_{col} ==========");
+    
+    if (hasTree)
+    {
+        Debug.Log("⚠ Ya hay árbol en esta celda");
+        return;
+    }
+    
+    Debug.Log($"✓ Plantando árbol");
+    PlaceTree();
+}
 }

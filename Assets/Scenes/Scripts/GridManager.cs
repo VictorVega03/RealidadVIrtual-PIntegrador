@@ -167,4 +167,46 @@ public class GridManager : MonoBehaviour
         totalScore = 0;
         CreateGrid();
     }
+
+
+    public CellController FindClosestCell(Vector2 dropPosition)
+    {
+        Debug.Log($"\n→ FindClosestCell en posición: {dropPosition}");
+        
+        CellController closestCell = null;
+        float closestDistance = float.MaxValue;
+        
+        for (int row = 0; row < rows; row++)
+        {
+            for (int col = 0; col < cols; col++)
+            {
+                if (cells[row, col] != null)
+                {
+                    RectTransform cellRect = cells[row, col].GetComponent<RectTransform>();
+                    if (cellRect != null)
+                    {
+                        Vector2 cellPosition = cellRect.anchoredPosition;
+                        float distance = Vector2.Distance(dropPosition, cellPosition);
+                        
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestCell = cells[row, col];
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (closestCell != null)
+        {
+            Debug.Log($"✓ Celda más cercana: {closestCell.name}, distancia: {closestDistance}");
+        }
+        else
+        {
+            Debug.Log("⚠ No se encontró ninguna celda");
+        }
+        
+        return closestCell;
+    }
 }
