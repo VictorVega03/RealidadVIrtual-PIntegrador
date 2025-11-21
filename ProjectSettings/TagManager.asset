@@ -10,6 +10,13 @@ TagManager:
   - playButton
   - TrashCan
   - WormApple
+  - Banana
+  - Carrot
+  - Cherry
+  - Grape
+  - viewResultButton
+  - DialogueTrigger
+  - Tree
   layers:
   - Default
   - TransparentFX

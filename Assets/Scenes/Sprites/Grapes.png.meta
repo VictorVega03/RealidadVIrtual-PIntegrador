@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 35707e4a526b3ac40ae824655820fe86
+guid: 19fcacb554d0c554983f2922aeda3460
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2676700935207863569
-    second: imagen_2025-11-04_211045909_0
+      213: -1225635468801588992
+    second: Grapes_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: imagen_2025-11-04_211045909_0
+      name: Grapes_0
       rect:
         serializedVersion: 2
-        x: 349
-        y: 89
-        width: 308
-        height: 357
+        x: 250
+        y: 44
+        width: 634
+        height: 853
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 115450d915d852520800000000000000
-      internalID: 2676700935207863569
+      spriteID: 00146f9e80badfee0800000000000000
+      internalID: -1225635468801588992
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      imagen_2025-11-04_211045909_0: 2676700935207863569
+      Grapes_0: -1225635468801588992
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
