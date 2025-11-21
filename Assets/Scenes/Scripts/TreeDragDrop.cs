@@ -10,6 +10,7 @@ public class TreeDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     private Transform originalParent;
     private Canvas canvas;
     private int originalSiblingIndex;
+    private bool wasPlaced = false; // ← NUEVO: Si el árbol fue plantado
 
     void Awake()
     {
@@ -44,6 +45,7 @@ public class TreeDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         originalPosition = rectTransform.anchoredPosition;
         originalParent = transform.parent;
         originalSiblingIndex = transform.GetSiblingIndex();
+        wasPlaced = false;
         
         canvasGroup.alpha = 0.6f;
         canvasGroup.blocksRaycasts = false;
@@ -64,34 +66,39 @@ public class TreeDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     public void OnEndDrag(PointerEventData eventData)
     {
         Debug.Log($"\n========== OnEndDrag en {gameObject.name} ==========");
-        Debug.Log($"Posición final: {rectTransform.anchoredPosition}");
+        Debug.Log($"Posicion final: {rectTransform.anchoredPosition}");
         
-        // DETECCIÓN MANUAL: Buscar celda más cercana
+        // Detección manual: Buscar celda más cercana
         GridManager gridManager = FindObjectOfType<GridManager>();
         if (gridManager != null)
         {
             Vector2 dropPosition = rectTransform.anchoredPosition;
             CellController closestCell = gridManager.FindClosestCell(dropPosition);
             
-            if (closestCell != null)
+            if (closestCell != null && !closestCell.HasTree())
             {
-                Debug.Log($"✓ Celda más cercana encontrada");
+                Debug.Log($"✓ Celda valida encontrada - Plantando");
                 closestCell.TryPlaceTree();
+                wasPlaced = true;
+                
+                // Ocultar este árbol arrastrable
+                gameObject.SetActive(false);
+                Debug.Log("✓ Arbol arrastrable ocultado");
             }
             else
             {
-                Debug.Log("⚠ No se encontró celda cercana");
+                Debug.Log("⚠ Celda no valida o ya ocupada");
             }
         }
         
-        // Restaurar transparencia y raycasts
-        canvasGroup.alpha = 1f;
-        canvasGroup.blocksRaycasts = true;
-        
-        // Volver a posición y orden original
-        rectTransform.anchoredPosition = originalPosition;
-        transform.SetSiblingIndex(originalSiblingIndex);
-        
-        Debug.Log($"✓ Regresado a posición original: {originalPosition}");
+        // Solo regresar si NO fue plantado
+        if (!wasPlaced)
+        {
+            canvasGroup.alpha = 1f;
+            canvasGroup.blocksRaycasts = true;
+            rectTransform.anchoredPosition = originalPosition;
+            transform.SetSiblingIndex(originalSiblingIndex);
+            Debug.Log($"✓ Regresado a posicion original: {originalPosition}");
+        }
     }
 }

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
@@ -7,103 +6,100 @@ public class DialogueManager : MonoBehaviour
 {
     [Header("UI References")]
     public GameObject DialogPanel;
-    public TextMeshProUGUI dialogueText;
-    public float typingSpeed = 0.05f;
+    public TextMeshProUGUI DialogueText;
     
-    [Header("Character Animation")]
-    public Animator characterAnimator;
-
+    [Header("Settings")]
+    public float typingSpeed = 0.05f;
+    public float displayTime = 3f; // Tiempo que se muestra el dialogo antes de cerrarse
+    
     private Coroutine typingCoroutine;
+    private Coroutine closeCoroutine;
+    private bool isWelcomeMessage = false;
 
-    void Start()
+    void Awake()
     {
-        Debug.Log("=== DialogueManager Start() ===");
-        
-        if (DialogPanel == null)
+        if (DialogPanel != null && DialogPanel.activeSelf)
         {
-            Debug.LogError("ERROR: DialogPanel es NULL!");
-            return;
+            DialogPanel.SetActive(false);
         }
         
-        DialogPanel.SetActive(false);
-        Debug.Log("✓ DialogPanel desactivado en Start()");
+        if (DialogueText != null)
+        {
+            DialogueText.richText = true;
+        }
     }
 
-    public void ShowDialogue(string message)
+    public void ShowDialogue(string message, bool isWelcome = false, float customDisplayTime = -1)
     {
-        Debug.Log($"\n========== ShowDialogue() ==========");
-        Debug.Log($"Mensaje: {message}");
+        if (DialogPanel == null || DialogueText == null) return;
         
-        if (DialogPanel == null)
-        {
-            Debug.LogError("ERROR: DialogPanel es NULL!");
-            return;
-        }
+        isWelcomeMessage = isWelcome;
         
-        if (dialogueText == null)
-        {
-            Debug.LogError("ERROR: dialogueText es NULL!");
-            return;
-        }
-        
-        Debug.Log($"DialogPanel estado antes de activar: {DialogPanel.activeSelf}");
-        
-        DialogPanel.SetActive(true);
-        
-        Debug.Log($"DialogPanel estado después de activar: {DialogPanel.activeSelf}");
-        
+        // Detener coroutines anteriores
         if (typingCoroutine != null)
         {
             StopCoroutine(typingCoroutine);
-            Debug.Log("Coroutine anterior detenida");
         }
-        
-        typingCoroutine = StartCoroutine(TypeText(message));
-        Debug.Log("✓ Coroutine TypeText iniciada");
-        
-        if (characterAnimator != null)
+        if (closeCoroutine != null)
         {
-            characterAnimator.SetTrigger("Talk");
-            Debug.Log("✓ Animación 'Talk' activada");
-        }
-    }
-
-    IEnumerator TypeText(string message)
-    {
-        Debug.Log("→ TypeText coroutine iniciada");
-        dialogueText.text = "";
-        
-        int charCount = 0;
-        foreach (char letter in message)
-        {
-            dialogueText.text += letter;
-            charCount++;
-            yield return new WaitForSeconds(typingSpeed);
+            StopCoroutine(closeCoroutine);
         }
         
-        Debug.Log($"✓ TypeText completado ({charCount} caracteres)");
-        Debug.Log("→ Esperando 3 segundos antes de cerrar...");
+        DialogPanel.SetActive(true);
         
-        yield return new WaitForSeconds(3f);
-        
-        Debug.Log("→ Llamando a HideDialogue()");
-        HideDialogue();
+        float timeToShow = customDisplayTime > 0 ? customDisplayTime : displayTime;
+        typingCoroutine = StartCoroutine(TypeTextAndClose(message, timeToShow, isWelcome));
     }
 
     public void HideDialogue()
     {
-        Debug.Log("\n========== HideDialogue() ==========");
+        if (typingCoroutine != null)
+        {
+            StopCoroutine(typingCoroutine);
+        }
+        if (closeCoroutine != null)
+        {
+            StopCoroutine(closeCoroutine);
+        }
         
         if (DialogPanel != null)
         {
             DialogPanel.SetActive(false);
-            Debug.Log("✓ DialogPanel desactivado");
         }
         
-        if (characterAnimator != null)
+        isWelcomeMessage = false;
+    }
+
+    IEnumerator TypeTextAndClose(string message, float timeToShow, bool isWelcome)
+    {
+        // Escribir el texto
+        DialogueText.text = "";
+        
+        foreach (char letter in message)
         {
-            characterAnimator.SetTrigger("Idle");
-            Debug.Log("✓ Animación 'Idle' activada");
+            DialogueText.text += letter;
+            yield return new WaitForSeconds(typingSpeed);
+        }
+        
+        Debug.Log($"✓ Texto completado, esperando {timeToShow} segundos");
+        
+        // Si es mensaje de bienvenida, esperar más tiempo
+        if (isWelcome)
+        {
+            yield return new WaitForSeconds(timeToShow);
+            
+            // Notificar al Level3Manager para iniciar juego
+            Level3Manager levelManager = FindObjectOfType<Level3Manager>();
+            if (levelManager != null)
+            {
+                levelManager.OnCharacterClicked();
+            }
+        }
+        else
+        {
+            // Mensaje normal - esperar y cerrar
+            yield return new WaitForSeconds(timeToShow);
+            HideDialogue();
         }
     }
 }
