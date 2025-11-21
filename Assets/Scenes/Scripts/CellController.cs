@@ -60,48 +60,55 @@ public class CellController : MonoBehaviour, IDropHandler, IPointerEnterHandler,
         }
     }
 
-    void PlaceTree()
+   void PlaceTree()
+{
+    Debug.Log($"→ PlaceTree en Cell_{row}_{col}");
+    hasTree = true;
+    
+    if (treePrefab == null)
     {
-        Debug.Log($"→ PlaceTree en Cell_{row}_{col}");
-        hasTree = true;
-        
-        if (treePrefab == null)
-        {
-            Debug.LogError("ERROR: treePrefab es NULL!");
-            return;
-        }
-        
-        // Instanciar árbol visual en esta celda UI
-        currentTree = Instantiate(treePrefab, transform);
-        
-        // Configurar como hijo UI - MANTENER ESCALA DEL PREFAB
-        RectTransform treeRect = currentTree.GetComponent<RectTransform>();
-        if (treeRect != null)
-        {
-            treeRect.anchoredPosition = Vector2.zero;
-            // NO cambiar localScale - usar la del prefab (0.12)
-            Debug.Log($"✓ Árbol posicionado en celda con escala: {currentTree.transform.localScale}");
-        }
-        else
-        {
-            Debug.LogError("ERROR: TreeUI no tiene RectTransform!");
-        }
-        
-        // Notificar al GridManager
-        if (gridManager != null)
-        {
-            gridManager.OnTreePlaced(row, col, true);
-        }
-        else
-        {
-            Debug.LogError("ERROR: gridManager es NULL!");
-        }
-        
-        Debug.Log($"✓ Árbol plantado exitosamente en Cell_{row}_{col}");
-        
-        // Animación
-        PlayPlantAnimation();
+        Debug.LogError("ERROR: treePrefab es NULL!");
+        return;
     }
+    
+    // Instanciar árbol visual en esta celda UI
+    currentTree = Instantiate(treePrefab, transform);
+    
+    // NUEVO: Agregar Canvas con sorting order muy alto
+    Canvas treeCanvas = currentTree.GetComponent<Canvas>();
+    if (treeCanvas == null)
+    {
+        treeCanvas = currentTree.AddComponent<Canvas>();
+    }
+    treeCanvas.overrideSorting = true;
+    treeCanvas.sortingOrder = 200;
+    
+    RectTransform treeRect = currentTree.GetComponent<RectTransform>();
+    if (treeRect != null)
+    {
+        treeRect.anchoredPosition = Vector2.zero;
+        
+        // SOLUCIÓN SIMPLE: Establecer escala directamente
+        currentTree.transform.localScale = new Vector3(0.3f, 0.3f, 1f);
+        
+        Debug.Log($"✓ Árbol configurado con escala: {currentTree.transform.localScale}");
+    }
+    else
+    {
+        Debug.LogError("ERROR: TreeUI no tiene RectTransform!");
+    }
+    
+    // Notificar al GridManager
+    if (gridManager != null)
+    {
+        gridManager.OnTreePlaced(row, col, true);
+    }
+    
+    Debug.Log($"✓ Árbol plantado exitosamente en Cell_{row}_{col}");
+    
+    // Animación
+    PlayPlantAnimation();
+}
 
     void PlayPlantAnimation()
     {
@@ -112,27 +119,26 @@ public class CellController : MonoBehaviour, IDropHandler, IPointerEnterHandler,
     }
 
     System.Collections.IEnumerator ScaleAnimation(GameObject tree)
+{
+    float duration = 0.3f;
+    float elapsed = 0f;
+    
+    // Escala objetivo
+    Vector3 targetScale = new Vector3(0.3f, 0.3f, 1f);
+    
+    // Empezar desde 0
+    tree.transform.localScale = Vector3.zero;
+    
+    while (elapsed < duration)
     {
-        float duration = 0.3f;
-        float elapsed = 0f;
-        
-        // Guardar escala objetivo (la que tiene el prefab)
-        Vector3 targetScale = tree.transform.localScale;
-        
-        // Empezar desde 0
-        tree.transform.localScale = Vector3.zero;
-        
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / duration;
-            tree.transform.localScale = Vector3.Lerp(Vector3.zero, targetScale, t);
-            yield return null;
-        }
-        
-        tree.transform.localScale = targetScale;
-        Debug.Log($"✓ Animación completada con escala: {targetScale}");
+        elapsed += Time.deltaTime;
+        float t = elapsed / duration;
+        tree.transform.localScale = Vector3.Lerp(Vector3.zero, targetScale, t);
+        yield return null;
     }
+    
+    tree.transform.localScale = targetScale;
+}
 
     public bool HasTree()
     {
