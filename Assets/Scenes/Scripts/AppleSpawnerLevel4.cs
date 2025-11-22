@@ -5,14 +5,15 @@ public class AppleSpawnerLevel4 : MonoBehaviour
     public GameObject applePrefab;
     public Vector2 centerPosition = new Vector2(0, 0);
     public float spacing = 0.8f;
-    public int totalApples = 12;
 
     public void SpawnAllApples()
     {
-        // Usa totalApples de GameConfig si está disponible
-        int apples = GameConfig.totalApples > 0 ? GameConfig.totalApples : totalApples;
+        // Siempre usar valores de GameConfig 
+        int apples = GameConfig.totalApples;
         
-        // Genera en círculo o cuadrícula compacta
+        Debug.Log($"Generando {apples} pizzas");
+        
+        // Genera en cuadrícula compacta
         int columns = Mathf.CeilToInt(Mathf.Sqrt(apples));
         
         int appleIndex = 0;

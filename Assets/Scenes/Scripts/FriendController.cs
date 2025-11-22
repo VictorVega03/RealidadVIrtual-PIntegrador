@@ -13,22 +13,25 @@ public class FriendController : MonoBehaviour
     
     [Header("Audio")]
     public AudioSource friendAudio;
+    public AudioSource victoryAudio; // Sonido de victoria
     
     [Header("Indicador")]
     public GameObject divisionIndicatorPrefab;
     public float indicatorOffset = 1.5f;
     
     [Header("Animación de Desaparición")]
-    public float fadeOutDuration = 1f; // Duración del fade out
-    public float delayBeforeFade = 0.5f; // Espera antes de empezar a desaparecer
+    public float fadeOutDuration = 1f;
+    public float delayBeforeFade = 0.5f;
     
     private SpriteRenderer spriteRenderer;
     private bool isFull = false;
+    private static bool levelCompleteSoundPlayed = false; // reproducir solo una vez
 
     void Start()
     {
         UpdateUI();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        levelCompleteSoundPlayed = false; // Resetear al inicio
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -47,7 +50,6 @@ public class FriendController : MonoBehaviour
             
             Destroy(other.gameObject);
             
-            // ✨ NUEVO: Si ya está lleno, hacer fade out
             if (currentApples >= maxApples && !isFull)
             {
                 isFull = true;
@@ -76,10 +78,8 @@ public class FriendController : MonoBehaviour
         }
     }
 
-    //fade out gradual cuando el niño está lleno
     IEnumerator FadeOutAndDisappear()
     {
-        // Esperar un poco antes de empezar a desaparecer
         yield return new WaitForSeconds(delayBeforeFade);
         
         if (spriteRenderer != null)
@@ -87,7 +87,6 @@ public class FriendController : MonoBehaviour
             float elapsedTime = 0f;
             Color originalColor = spriteRenderer.color;
             
-            // Fade out gradual
             while (elapsedTime < fadeOutDuration)
             {
                 elapsedTime += Time.deltaTime;
@@ -96,17 +95,14 @@ public class FriendController : MonoBehaviour
                 yield return null;
             }
             
-            // Asegurar que el alpha sea 0
             spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
         }
         
-        // También hacer fade out del texto si existe
         if (appleCountText != null)
         {
             appleCountText.gameObject.SetActive(false);
         }
         
-        // Desactivar el collider para que no reciba más pizzas
         Collider2D collider = GetComponent<Collider2D>();
         if (collider != null)
         {
@@ -123,16 +119,64 @@ public class FriendController : MonoBehaviour
         bool allComplete = true;
         foreach (FriendController friend in allFriends)
         {
-            if (friend.currentApples < friend.maxApples)
+            if (friend.gameObject.activeInHierarchy && friend.currentApples < friend.maxApples)
             {
                 allComplete = false;
                 break;
             }
         }
 
-        if (allComplete)
+        if (allComplete && !levelCompleteSoundPlayed)
         {
+            levelCompleteSoundPlayed = true;
             Debug.Log("¡Nivel 4 completado! Todas las pizzas repartidas equitativamente");
+            
+            // Fade out de música de fondo
+            StartCoroutine(FadeOutBackgroundMusic(1.0f)); // 1 segundo de fade
+            
+            // Reproducir sonido de victoria
+            PlayVictorySound();
+        }
+    }
+
+    // Fade out gradual de la música
+    IEnumerator FadeOutBackgroundMusic(float duration)
+    {
+        GameManager gameManager = FindObjectOfType<GameManager>();
+        
+        if (gameManager != null && gameManager.backgroundMusic != null)
+        {
+            AudioSource bgMusic = gameManager.backgroundMusic;
+            float startVolume = bgMusic.volume;
+            float elapsedTime = 0f;
+            
+            Debug.Log("Haciendo fade out de música de fondo...");
+            
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                bgMusic.volume = Mathf.Lerp(startVolume, 0f, elapsedTime / duration);
+                yield return null;
+            }
+            
+            bgMusic.volume = 0f;
+            bgMusic.Stop();
+            
+            Debug.Log("Música de fondo detenida");
+        }
+    }
+    
+    // Método para reproducir el sonido de victoria
+    void PlayVictorySound()
+    {
+        if (victoryAudio != null && victoryAudio.clip != null)
+        {
+            victoryAudio.Play();
+            Debug.Log("Reproduciendo sonido de victoria!");
+        }
+        else
+        {
+            Debug.LogWarning("Victory Audio no está configurado");
         }
     }
 }
