@@ -7,7 +7,10 @@ public class GameManager : MonoBehaviour
 {
     public Button playButton;
     public AppleSpawner appleSpawner; // Para nivel 1
-    public AppleSpawnerLevel2 appleSpawnerLevel2; // NUEVO: Para nivel 2
+    public AppleSpawnerLevel2 appleSpawnerLevel2; // Para nivel 2
+    public AppleSpawnerLevel4 appleSpawnerLevel4; // Para nivel 4
+    public DivisionUIManager divisionUIManager; // Para mostrar UI del nivel 4
+    public SubtractionUIManager subtractionUIManager; // Para mostrar UI del nivel 2
 
     [Header("Referencias UI y Spawner")]
     public GameObject characterObject;
@@ -18,7 +21,7 @@ public class GameManager : MonoBehaviour
     public float characterSlideSpeed = 5f;
     public float characterVisibleX = -6f;
     public float characterHiddenX = -12f;
-    public string characterTag = "DialogueTrigger";
+    public string characterTag = "Character";
     public float characterSpinSpeed = 720f;
 
     [Header("Referencias de Audio")]
@@ -120,6 +123,10 @@ public class GameManager : MonoBehaviour
             {
                 dialogueText.text = "Muy bien! Ahora ayúdame a separar las manzanas malas.\nArrastra las manzanas con gusano al bote de basura. Cuenta cuántas manzanas malas eliminas:D!";
             }
+            else if (GameConfig.currentLevel == GameConfig.Level.Level4)
+            {
+                dialogueText.text = "Ahora Ayúdame a repartir estas pizzas entre mis amigos.\nCada uno debe recibir la misma cantidad. ¡Arrastra las pizzas hacia ellos!";
+            }
         }
 
         currentGameState = GameState.DialogueReady;
@@ -163,6 +170,25 @@ public class GameManager : MonoBehaviour
             if (appleSpawnerLevel2 != null)
             {
                 appleSpawnerLevel2.SpawnAllApples();
+            }
+            
+            // Mostrar UI de resta
+            if (subtractionUIManager != null)
+            {
+                subtractionUIManager.ShowUI();
+            }
+        }
+        else if (GameConfig.currentLevel == GameConfig.Level.Level4)
+        {
+            if (appleSpawnerLevel4 != null)
+            {
+                appleSpawnerLevel4.SpawnAllApples();
+            }
+            
+            // ✨ NUEVO: Mostrar UI de división cuando empiecen las pizzas
+            if (divisionUIManager != null)
+            {
+                divisionUIManager.ShowUI();
             }
         }
     }
