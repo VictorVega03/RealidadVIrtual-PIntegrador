@@ -11,7 +11,7 @@ public class DivisionGenerator : MonoBehaviour
     [Tooltip("Mínimo de pizzas por amigo")]
     public int minPizzasPerFriend = 2;
     [Tooltip("Máximo de pizzas por amigo")]
-    public int maxPizzasPerFriend = 5;
+    public int maxPizzasPerFriend = 3;
     
     [Header("Debug")]
     public bool showDebugInfo = true;
