@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
+    // Configuraciones de la cuadrícula 
     [Header("Grid Settings")]
     public GameObject cellPrefab;
     public Transform gridParent;
