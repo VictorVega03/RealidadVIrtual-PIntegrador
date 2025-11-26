@@ -116,10 +116,11 @@ public class AppleSpawner : MonoBehaviour
         }
     }
 
-    // Opcional: Para detener la generación de manzanas
+    // ✨ CORRECCIÓN: Función para detener la generación de manzanas (completa)
     public void StopSpawning()
     {
         isSpawning = false;
-        StopAllCoroutines();
+        // Detener la corrutina principal de generación para evitar nuevos spawns
+        StopAllCoroutines(); 
     }
 }
