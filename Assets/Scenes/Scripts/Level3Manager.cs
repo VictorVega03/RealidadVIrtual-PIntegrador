@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement; 
 public class Level3Manager : MonoBehaviour
 {
     [Header("Referencias UI")]
     public DialogueManager dialogueManager;
     public Button playButton;
+    // ✨ NUEVA REFERENCIA: Botón para salir al menú
+    public Button exitButton; 
     
     [Header("Audio")]
     public AudioSource voiceAudio;
@@ -25,6 +27,13 @@ public class Level3Manager : MonoBehaviour
             playButton.onClick.AddListener(OnPlayButtonClicked);
         }
         
+        // ✨ CONEXIÓN DEL BOTÓN DE SALIR
+        if (exitButton != null)
+        {
+            // Nota: Asumo que el botón ya está activo en la escena
+            exitButton.onClick.AddListener(LoadMenuScene); 
+        }
+        
         if (dialogueManager == null)
         {
             dialogueManager = FindObjectOfType<DialogueManager>();
@@ -38,6 +47,14 @@ public class Level3Manager : MonoBehaviour
         SetTreesDraggable(false);
     }
 
+    // ✨ NUEVA FUNCIÓN: Carga la escena "menu"
+    public void LoadMenuScene()
+    {
+        // 🚨 Importante: Asegúrate que la escena "menu" esté añadida en Build Settings
+        Debug.Log("Cargando escena: menu");
+        SceneManager.LoadScene("menu");
+    }
+    
     public void OnPlayButtonClicked()
     {
         if (playButton != null)

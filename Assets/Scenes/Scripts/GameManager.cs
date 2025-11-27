@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement; 
 
 public class GameManager : MonoBehaviour
 {
@@ -13,7 +14,10 @@ public class GameManager : MonoBehaviour
     public DivisionUIManager divisionUIManager; // Para mostrar UI del nivel 4
     public SubtractionUIManager subtractionUIManager; // Para mostrar UI del nivel 2
 
-    // ✨ NUEVAS VARIABLES PARA EL TEMPORIZADOR
+    // ✨ NUEVA REFERENCIA PARA EL BOTÓN DE SALIR
+    public Button exitButton; 
+
+    // ✨ VARIABLES DE TEMPORIZADOR EXISTENTES
     [Header("Configuración del Temporizador")]
     public float timeLimitSeconds = 60f; // 1 minuto = 60 segundos
     public TextMeshProUGUI timerText; // Arrastra aquí el objeto 'TimerText' de la UI
@@ -60,6 +64,13 @@ public class GameManager : MonoBehaviour
             playButton.gameObject.SetActive(true);
             playButton.onClick.AddListener(OnPlayButtonClick);
         }
+        
+        // ✨ CONEXIÓN DEL BOTÓN DE SALIR
+        if (exitButton != null)
+        {
+            exitButton.gameObject.SetActive(true); // Asegurar que esté activo
+            exitButton.onClick.AddListener(LoadMenuScene); // Asignar la función de salida
+        }
 
         if (characterObject != null)
         {
@@ -94,7 +105,7 @@ public class GameManager : MonoBehaviour
             }
         }
         
-        // ✨ NUEVA LÓGICA DE TIEMPO
+        // LÓGICA DE TIEMPO
         if (currentGameState == GameState.Playing)
         {
             currentTime -= Time.deltaTime;
@@ -109,12 +120,18 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    // ✨ FUNCIÓN CORREGIDA: Actualiza el texto del contador
+    // ✨ NUEVA FUNCIÓN: Carga la escena "menu"
+    public void LoadMenuScene()
+    {
+        // 🚨 IMPORTANTE: Asegúrate que la escena "menu" esté añadida en Build Settings
+        Debug.Log("Cargando escena: menu");
+        SceneManager.LoadScene("menu");
+    }
+
     void UpdateTimerDisplay()
     {
         if (timerText != null)
         {
-            // ⭐️ CORRECCIÓN: Usar Mathf.Max para asegurar que el valor sea al menos 0
             float displayTime = Mathf.Max(0f, currentTime);
 
             int minutes = Mathf.FloorToInt(displayTime / 60f);
@@ -125,7 +142,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ✨ NUEVA FUNCIÓN: Maneja el fin del juego por tiempo
     public void HandleGameEnd()
     {
         Debug.Log("¡Tiempo terminado! Fin del juego.");
@@ -151,7 +167,6 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ShowCharacterEndDialogue("Se acabó el tiempo. ¡Buen intento! \nPresiona para jugar de nuevo o finalizar."));
     }
     
-    // ✨ NUEVA FUNCIÓN: Muestra el diálogo de fin (similar a ShowCharacterAndDialogue)
     IEnumerator ShowCharacterEndDialogue(string message)
     {
         // 1. Deslizar al personaje de vuelta
@@ -248,7 +263,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Personaje oculto. ¡Juego iniciado!");
         currentGameState = GameState.Playing;
         
-        // ✨ INICIA EL CONTADOR Y LO MUESTRA
+        // INICIA EL CONTADOR Y LO MUESTRA
         currentTime = timeLimitSeconds;
         if (timerText != null)
         {
