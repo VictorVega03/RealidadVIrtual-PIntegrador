@@ -8,6 +8,33 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level1Suma.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Menu.unity
+    guid: 8ef1234557af65e478452aaa8104eba9
+  - enabled: 1
+    path: Assets/Scenes/Niveles.unity
+    guid: b9bdfb00178fdbe479482fbc632972d2
+  - enabled: 1
+    path: Assets/Scenes/Level2Resta.unity
+    guid: f67cbb66b08a3421fb1efc172a4378d6
+  - enabled: 1
+    path: Assets/Scenes/ExamSuma.unity
+    guid: edbc46604c498a649bf6f82b832fb961
+  - enabled: 1
+    path: Assets/Scenes/ExamResta.unity
+    guid: b2114cb414e850e43af1f9a8a989da26
+  - enabled: 1
+    path: Assets/Scenes/ExamMulti.unity
+    guid: 9bd27723a4bdb2040bfbf88137157b2c
+  - enabled: 1
+    path: Assets/Scenes/ExamDivision.unity
+    guid: e01f0b197820c2645946988c352e611c
+  - enabled: 1
+    path: Assets/Scenes/Resultados.unity
+    guid: 4099d1446a151ac45be77e305aa37454
+  - enabled: 1
+    path: Assets/Scenes/Creditos.unity
+    guid: c4fc56af335f16b4b8d9a5799b6111bb
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
